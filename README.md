@@ -12,25 +12,24 @@ the discrete GPU.
 ## Install
 
 ```bash
-cp bin/omarchy-vibrance ~/.local/bin/
-chmod +x ~/.local/bin/omarchy-vibrance
-
-mkdir -p ~/.config/hypr/shaders
-cp shaders/vibrance.frag ~/.config/hypr/shaders/
-
-mkdir -p ~/.config/omarchy/plugins
-cp -r plugins/bwzkk.vibrance ~/.config/omarchy/plugins/
-omarchy-shell shell rescanPlugins
+git clone https://github.com/bwz-kk/omarchy-vibrance.git
+cd omarchy-vibrance
+./install.sh
 ```
 
-Add the widget to your bar (`~/.config/omarchy/shell.json`, under
-`bar.layout.right` or any section):
+This copies the CLI to `~/.local/bin`, the shader to
+`~/.config/hypr/shaders`, the plugin to `~/.config/omarchy/plugins`, adds
+the widget to your bar's right section in `~/.config/omarchy/shell.json`
+(merged in without touching your existing widgets), and rescans plugins.
+Safe to re-run — it won't duplicate the bar entry or overwrite a shader
+you've already tuned.
 
-```json
-{ "id": "bwzkk.vibrance" }
-```
+Requires `python3` (used for the one-time `shell.json` merge — ships with
+Omarchy).
 
-Optional keybinding (`~/.config/hypr/bindings.lua`):
+Optional keybinding — check the key isn't already bound first
+(`omarchy menu keybindings --print`), then add to
+`~/.config/hypr/bindings.lua`:
 
 ```lua
 o.bind("SUPER + SHIFT + V", "Toggle vibrance", "omarchy-vibrance toggle")
