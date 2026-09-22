@@ -1,0 +1,44 @@
+#!/bin/bash
+# Saturation-boost screen shader control (compositor-level, vendor-agnostic --
+# see ~/.config/hypr/shaders/vibrance.frag).
+set -euo pipefail
+
+FRAG="$HOME/.config/hypr/shaders/vibrance.frag"
+
+current_saturation() {
+  grep -oP '(?<=const float saturation = )[0-9.]+' "$FRAG"
+}
+
+is_on() {
+  [ "$(hyprctl getoption decoration:screen_shader -j | grep -o '"str": *"[^"]*"' | cut -d'"' -f4)" = "$FRAG" ]
+}
+
+enable() {
+  hyprctl eval "hl.config({decoration = {screen_shader = \"$FRAG\"}})" >/dev/null
+}
+
+disable() {
+  hyprctl eval 'hl.config({decoration = {screen_shader = ""}})' >/dev/null
+}
+
+case "${1:-status}" in
+  on) enable ;;
+  off) disable ;;
+  toggle)
+    if is_on; then disable; else enable; fi
+    ;;
+  status)
+    if is_on; then echo "on $(current_saturation)"; else echo "off $(current_saturation)"; fi
+    ;;
+  inc|dec)
+    delta=$([ "$1" = inc ] && echo 0.1 || echo -0.1)
+    new=$(awk -v c="$(current_saturation)" -v d="$delta" 'BEGIN{v=c+d; if(v<1)v=1; if(v>3)v=3; printf "%.2f", v}')
+    sed -i "s/const float saturation = [0-9.]*;/const float saturation = $new;/" "$FRAG"
+    if is_on; then disable; enable; fi
+    echo "$new"
+    ;;
+  *)
+    echo "usage: omarchy-vibrance {on|off|toggle|status|inc|dec}" >&2
+    exit 1
+    ;;
+esac

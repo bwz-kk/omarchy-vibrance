@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "bwzkk.vibrance",
+  "name": "Vibrance",
+  "version": "1.0.0",
+  "author": "bwzkk",
+  "license": "MIT",
+  "description": "Toggle the saturation-boost screen shader and scroll to adjust its strength.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "keepLoaded": false,
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Vibrance",
+    "description": "Toggle and adjust the saturation-boost screen shader.",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
